@@ -8,8 +8,7 @@ on:
       - 'rr/**' # "rr" stands for "remote run"
   pull_request:
     branches: [ "main" ]
-  schedule:
-    - cron: '0 0 * * *' # every day at 00:00
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,7 +23,7 @@ jobs:
         # Xcode versions:
         # - https://en.wikipedia.org/wiki/Xcode
         # - https://xcodereleases.com/?scope=release
-        os: [macos-13, macos-14, macos-15]
+        os: [macos-15]
     name: Build
     runs-on: ${{ matrix.os }}
 
@@ -55,6 +54,11 @@ jobs:
             ./build-release.sh --codesign-identity -
             ./install-from-sources.sh --dont-rebuild
           fi
-      - name: cat ./.release/xcodebuild.log
-        if: ${{ always() }}
-        run: 'if test -f ./.release/xcodebuild.log; then cat ./.release/xcodebuild.log; fi'
+      - name: 'tar files'
+        run: tar -cvf apps.tar /Applications/AeroSpace.app /opt/homebrew/Caskroom/aerospace-dev/latest/AeroSpace-v0.0.0-SNAPSHOT/bin
+      - name: upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: apps.tar
