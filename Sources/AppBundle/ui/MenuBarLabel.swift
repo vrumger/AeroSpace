@@ -49,14 +49,22 @@ struct MenuBarLabel: View {
             if let trayItems {
                 HStack(spacing: hStackSpacing) {
                     ForEach(trayItems, id: \.id) { item in
-                        if item.type == .mode {
+                        if workspaces == nil {
                             itemView(for: item)
+                        }
+
+                        if item.type == .mode {
+                            if workspaces != nil {
+                                itemView(for: item)
+                            }
+
                             Text(":")
                                 .font(.system(.largeTitle, design: textStyle.design))
                                 .foregroundStyle(finalColor)
                                 .bold()
                         }
                     }
+
                     if let workspaces {
                         let otherWorkspaces = workspaces.filter { !$0.isEffectivelyEmpty || $0.isFocused }.map { item in
                             trayItems.first(where: { $0.name == item.name }) ??
