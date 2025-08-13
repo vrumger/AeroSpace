@@ -49,8 +49,8 @@ struct MenuBarLabel: View {
             if let trayItems {
                 HStack(spacing: hStackSpacing) {
                     ForEach(trayItems, id: \.id) { item in
-                        itemView(for: item)
                         if item.type == .mode {
+                            itemView(for: item)
                             Text(":")
                                 .font(.system(.largeTitle, design: textStyle.design))
                                 .foregroundStyle(finalColor)
@@ -58,19 +58,15 @@ struct MenuBarLabel: View {
                         }
                     }
                     if let workspaces {
-                        let otherWorkspaces = workspaces.filter { !$0.isEffectivelyEmpty && !$0.isVisible }
+                        let otherWorkspaces = workspaces.filter { !$0.isEffectivelyEmpty || $0.isFocused }.map { item in
+                            trayItems.first(where: { $0.name == item.name }) ??
+                                TrayItem(type: .workspace, name: item.name, isActive: false)
+                        }
+
                         if !otherWorkspaces.isEmpty {
-                            Group {
-                                Text("|")
-                                    .font(.system(.largeTitle))
-                                    .foregroundStyle(finalColor)
-                                    .bold()
-                                    .padding(.bottom, 6)
-                                ForEach(otherWorkspaces, id: \.name) { item in
-                                    itemView(for: TrayItem(type: .workspace, name: item.name, isActive: false))
-                                }
+                            ForEach(otherWorkspaces, id: \.id) { trayItem in
+                                itemView(for: trayItem)
                             }
-                            .opacity(0.6)
                         }
                     }
                 }
