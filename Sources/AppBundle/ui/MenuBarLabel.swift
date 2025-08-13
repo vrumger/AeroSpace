@@ -66,13 +66,24 @@ struct MenuBarLabel: View {
                     }
 
                     if let workspaces {
-                        let otherWorkspaces = workspaces.filter { !$0.isEffectivelyEmpty || $0.isFocused }.map { item in
-                            trayItems.first(where: { $0.name == item.name }) ??
-                                TrayItem(type: .workspace, name: item.name, isActive: false)
-                        }
+                        let sortedWorkspaces = workspaces
+                            .filter { !$0.isEffectivelyEmpty || $0.isFocused || $0.isVisible }
+                            .sorted { $0.monitor < $1.monitor }
+                        if !sortedWorkspaces.isEmpty {
+                            ForEach(Array(sortedWorkspaces.enumerated()), id: \.element.name) { index, workspace in
+                                if index > 0 {
+                                    let prevMonitor = sortedWorkspaces[index - 1].monitor
+                                    if workspace.monitor != prevMonitor {
+                                        Text("|")
+                                            .font(.system(.largeTitle))
+                                            .foregroundStyle(finalColor)
+                                            .bold()
+                                            .padding(.bottom, 6)
+                                    }
+                                }
 
-                        if !otherWorkspaces.isEmpty {
-                            ForEach(otherWorkspaces, id: \.id) { trayItem in
+                                let trayItem = trayItems.first(where: { $0.name == workspace.name }) ??
+                                    TrayItem(type: .workspace, name: workspace.name, isActive: false)
                                 itemView(for: trayItem)
                             }
                         }

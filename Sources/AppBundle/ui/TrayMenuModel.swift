@@ -35,6 +35,7 @@ public class TrayMenuModel: ObservableObject {
         return WorkspaceViewModel(
             name: $0.name,
             suffix: suffix,
+            monitor: $0.workspaceMonitor.name,
             isFocused: focus.workspace == $0,
             isEffectivelyEmpty: $0.isEffectivelyEmpty,
             isVisible: $0.isVisible,
@@ -53,6 +54,7 @@ public class TrayMenuModel: ObservableObject {
 struct WorkspaceViewModel: Hashable {
     let name: String
     let suffix: String
+    let monitor: String
     let isFocused: Bool
     let isEffectivelyEmpty: Bool
     let isVisible: Bool
