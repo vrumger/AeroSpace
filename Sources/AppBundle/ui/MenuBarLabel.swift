@@ -68,7 +68,15 @@ struct MenuBarLabel: View {
                     if let workspaces {
                         let sortedWorkspaces = workspaces
                             .filter { !$0.isEffectivelyEmpty || $0.isFocused || $0.isVisible }
-                            .sorted { $0.monitor < $1.monitor }
+                            .sorted { lhs, rhs in
+                                guard
+                                    let lhsIndex = sortedMonitors.firstIndex(where: { $0.name == lhs.monitor }),
+                                    let rhsIndex = sortedMonitors.firstIndex(where: { $0.name == rhs.monitor })
+                                else {
+                                    return false
+                                }
+                                return lhsIndex < rhsIndex
+                            }
                         if !sortedWorkspaces.isEmpty {
                             ForEach(Array(sortedWorkspaces.enumerated()), id: \.element.name) { index, workspace in
                                 if index > 0 {
