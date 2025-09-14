@@ -43,32 +43,32 @@ struct MenuBarLabel: View {
         return HStack(spacing: hStackSpacing) {
             let style = style ?? viewModel.experimentalUISettings.displayStyle
             switch style {
-            case .monospacedText: getText(for: .monospaced)
-            case .systemText: getText(for: .default)
-            case .squares: squares
-            case .i3:
-                squares
-                let workspaces = viewModel.workspaces.filter {
-                    !$0.isEffectivelyEmpty && !$0.isVisible
-                }
-                if !workspaces.isEmpty {
-                    otherWorkspaces(with: workspaces)
-                }
-            case .i3Ordered:
-                let modeItem = viewModel.trayItems.first { $0.type == .mode }
-                if let modeItem {
-                    itemView(for: modeItem)
-                    modeSeparator(with: .monospaced)
-                }
-                let orderedWorkspaces = viewModel.workspaces.filter {
-                    !$0.isEffectivelyEmpty || $0.isVisible
-                }
-                ForEach(orderedWorkspaces, id: \.name) { item in
-                    itemView(
-                        for: TrayItem(type: .workspace, name: item.name, isActive: item.isFocused)
-                    )
-                    .opacity(item.isVisible ? 1 : 0.5)
-                }
+                case .monospacedText: getText(for: .monospaced)
+                case .systemText: getText(for: .default)
+                case .squares: squares
+                case .i3:
+                    squares
+                    let workspaces = viewModel.workspaces.filter {
+                        !$0.isEffectivelyEmpty && !$0.isVisible
+                    }
+                    if !workspaces.isEmpty {
+                        otherWorkspaces(with: workspaces)
+                    }
+                case .i3Ordered:
+                    let modeItem = viewModel.trayItems.first { $0.type == .mode }
+                    if let modeItem {
+                        itemView(for: modeItem)
+                        modeSeparator(with: .monospaced)
+                    }
+                    let orderedWorkspaces = viewModel.workspaces.filter {
+                        !$0.isEffectivelyEmpty || $0.isVisible
+                    }
+                    ForEach(orderedWorkspaces, id: \.name) { item in
+                        itemView(
+                            for: TrayItem(type: .workspace, name: item.name, isActive: item.isFocused),
+                        )
+                        .opacity(item.isVisible ? 1 : 0.5)
+                    }
             }
         }
     }
